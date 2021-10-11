@@ -19,5 +19,6 @@ __pycache__/
 venv/
 
 data/*
-midi_output/*
-model_output/*
+midi_output/**/*.mid
+!**/sample_9be7bb66.mid
+model_output/**/*.pth
