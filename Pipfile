@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+torch = "*"
+torchvision = "*"
+torchaudio = "*"
+numpy = "*"
+gdown = "*"
+pypianoroll = "*"
+tqdm = "*"
+
+[dev-packages]
+tqdm = "*"
+
+[requires]
+python_version = "3.9"
