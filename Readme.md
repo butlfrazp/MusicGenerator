@@ -10,13 +10,24 @@ We are also proposing automating our training to be run on AML (honestly, I don'
 
 ## Running the project
 
+### Install Requirements
+
+Activate your python virtual environment and then install the requirements
+by running `pip install -r requirements.txt`
+
 ### Creating the dataset
 
 To get the dataset run `./scripts/create_dataset.sh`.
 
 ### Training the model
 
-To train the model run `python -m main`
+To train the model run `python -m main`.
+
+If you do this on your local machine it will take ~2.5 hours.
+
+### Generating Music
+
+Once you have a trained model to use run `python sample_generator/base_model_sample_generator.py` to generate music.
 
 ## Helpful links
 
