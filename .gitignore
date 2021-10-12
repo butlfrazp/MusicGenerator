@@ -22,3 +22,4 @@ data/*
 midi_output/**/*.mid
 !**/sample_9be7bb66.mid
 model_output/**/*.pth
+!model_output/**/*20000.pth

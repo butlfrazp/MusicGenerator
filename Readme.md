@@ -29,6 +29,11 @@ If you do this on your local machine it will take ~2.5 hours.
 
 Once you have a trained model to use run `python -m sample_generator.base_model_sample_generator` to generate music.
 
+### Running the sample
+
+To run the sample run `python -m sample_generator.base_model_sample_generator`.
+The output will show the name of the file that the program generated.
+
 ## Helpful links
 
 - [MuseGAN](https://salu133445.github.io/musegan/pdf/musegan-ismir2017-lbd-paper.pdf)

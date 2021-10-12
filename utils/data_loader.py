@@ -1,4 +1,5 @@
 import os
+from typing import List
 import numpy as np
 from pathlib import Path
 import pypianoroll
@@ -33,7 +34,7 @@ class CreateDataLoader:
         E.g. TRABCD12345678 -> A/B/C/TRABCD12345678"""
         return os.path.join(msd_id[2], msd_id[3], msd_id[4], msd_id)
 
-    def _get_id_list(self) -> list[str]:
+    def _get_id_list(self) -> List[str]:
         id_list = []
         for path in os.listdir(music_groups):
             filepath = os.path.join(music_groups, path)
@@ -43,7 +44,7 @@ class CreateDataLoader:
         id_list = list(set(id_list))
         return id_list
 
-    def _get_data(self, ids: list[str]) -> list:
+    def _get_data(self, ids: List[str]) -> list:
         data = []
         for msd_id in tqdm(ids):
             song_dir = self.dataset_root / self.msd_id_to_dirs(msd_id)
