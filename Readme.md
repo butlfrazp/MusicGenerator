@@ -27,7 +27,7 @@ If you do this on your local machine it will take ~2.5 hours.
 
 ### Generating Music
 
-Once you have a trained model to use run `python sample_generator/base_model_sample_generator.py` to generate music.
+Once you have a trained model to use run `python -m sample_generator.base_model_sample_generator` to generate music.
 
 ## Helpful links
 
