@@ -9,7 +9,7 @@ if __name__ == "__main__":
     discriminator = Discriminator()
 
     # getting the data loader
-    data_loader = CreateDataLoader().create_data_loader()
+    data_loader = CreateDataLoader().load_data_loader()
 
     #building the trainer
     trainer = BaseModelTrainer(data_loader, discriminator, generator)

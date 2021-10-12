@@ -14,6 +14,7 @@ from config import (
     batch_size,
     beat_resolution,
     data_dir,
+    dataset_output_dir,
     lowest_pitch,
     measure_resolution,
     music_groups,
@@ -72,16 +73,30 @@ class CreateDataLoader:
         data = np.stack(data)
         return data
 
-    def create_data_loader(self) -> DataLoader:
+    def _create_data_loader(self) -> DataLoader:
         ids = self._get_id_list()
         data = self._get_data(ids)
         data = torch.as_tensor(data, dtype=torch.float32)
+        # saving the dataset
+        torch.save(data, dataset_output_dir)
         dataset = TensorDataset(data)
         data_loader = DataLoader(
             dataset, batch_size=batch_size, drop_last=True, shuffle=True)
         return data_loader
 
+    def _load_data_loader(self) -> DataLoader:
+        data = torch.load(dataset_output_dir)
+        dataset = TensorDataset(data)
+        data_loader = DataLoader(
+            dataset, batch_size=batch_size, drop_last=True, shuffle=True)
+        return data_loader
+
+    def load_data_loader(self) -> DataLoader:
+        if os.path.exists(dataset_output_dir):
+            return self._load_data_loader()
+        return self._create_data_loader()
+
 if __name__ == "__main__":
     create_data_loader = CreateDataLoader()
-    data_loader = create_data_loader.create_data_loader()
+    data_loader = create_data_loader.load_data_loader()
     print(f"Length of data loader: {len(data_loader)};")

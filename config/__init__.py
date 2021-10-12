@@ -32,3 +32,6 @@ model_output_dir = "./model_output"
 
 # midi file output
 midi_output_dir = "./midi_output"
+
+# dataset output dir
+dataset_output_dir = "./data/dataset.pt"
