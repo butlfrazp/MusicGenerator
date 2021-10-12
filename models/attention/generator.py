@@ -7,12 +7,13 @@ from config import (
     n_pitches,
     measure_resolution
 )
+from models.attention.attention import Self_Attn
 
 class GeneraterBlock(torch.nn.Module):
     def __init__(self, in_dim, out_dim, kernel, stride):
         super().__init__()
-        self.transconv = torch.nn.ConvTranspose3d(in_dim, out_dim, kernel, stride)
-        self.batchnorm = torch.nn.BatchNorm3d(out_dim)
+        self.transconv = torch.nn.ConvTranspose2d(in_dim, out_dim, kernel, stride)
+        self.batchnorm = torch.nn.BatchNorm2d(out_dim)
     
     def forward(self, x):
         x = self.transconv(x)
@@ -24,28 +25,37 @@ class Generator(torch.nn.Module):
     as input a latent vector and outputs a fake sample."""
     def __init__(self):
         super().__init__()
-        self.transconv0 = GeneraterBlock(latent_dim, 256, (4, 1, 1), (4, 1, 1))
-        self.transconv1 = GeneraterBlock(256, 128, (1, 4, 1), (1, 4, 1))
-        self.transconv2 = GeneraterBlock(128, 64, (1, 1, 4), (1, 1, 4))
-        self.transconv3 = GeneraterBlock(64, 32, (1, 1, 3), (1, 1, 1))
-        self.transconv4 = torch.nn.ModuleList([
-            GeneraterBlock(32, 16, (1, 4, 1), (1, 4, 1))
+        self.transconv0 = GeneraterBlock(latent_dim, 256, (3, 3), (1, 1))
+        self.transconv1 = GeneraterBlock(256, 128, (2, 2), (1, 1))
+        self.transconv2 = GeneraterBlock(128, 128, (2, 3), (1, 1))
+        self.transconv3 = GeneraterBlock(128, 64, (3, 3), (1, 1))
+        self.transconv4 = GeneraterBlock(64, 32, (3, 3), (2, 2))
+        self.transconv5 = torch.nn.ModuleList([
+            GeneraterBlock(32, 16, (3, 3), (2, 2))
             for _ in range(n_tracks)
         ])
-        self.transconv5 = torch.nn.ModuleList([
-            GeneraterBlock(16, 1, (1, 1, 12), (1, 1, 12))
+        self.transconv6 = torch.nn.ModuleList([
+            GeneraterBlock(16, 1, (4, 4), (2, 2))
             for _ in range(n_tracks)
         ])
 
+        self.attn1 = Self_Attn(64, 'relu')
+        self.attn2 = Self_Attn(32, 'relu')
+        self.attn3 = Self_Attn(5, 'relu')
+
     def forward(self, x):
-        x = x.view(-1, latent_dim, 1, 1, 1)
+        x = x.view(-1, latent_dim, 1, 1)
         x = self.transconv0(x)
         x = self.transconv1(x)
         x = self.transconv2(x)
         x = self.transconv3(x)
-        x = [transconv(x) for transconv in self.transconv4]
-        x = torch.cat([transconv(x_) for x_, transconv in zip(x, self.transconv5)], 1)
+        x, _ = self.attn1(x)
+        x = self.transconv4(x)
+        x, _ = self.attn2(x)
+        x = [transconv(x) for transconv in self.transconv5]
+        x = torch.cat([transconv(x_) for x_, transconv in zip(x, self.transconv6)], 1)
         x = x.view(-1, n_tracks, n_measures * measure_resolution, n_pitches)
+        x, _ = self.attn3(x)
         return x
 
 if __name__ == "__main__":
