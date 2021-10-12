@@ -167,9 +167,7 @@ class BaseModelTrainer:
                     running_g_loss = 0.05 * g_loss + 0.95 * running_g_loss
                 else:
                     running_d_loss, running_g_loss = 0.0, 0.0
-                # liveloss.update({'negative_critic_loss': -running_d_loss})
-                # liveloss.update({'d_loss': running_d_loss, 'g_loss': running_g_loss})
-                
+
                 # Update losses to progress bar
                 progress_bar.set_description_str(
                     "(d_loss={: 8.6f}, g_loss={: 8.6f})".format(d_loss, g_loss))

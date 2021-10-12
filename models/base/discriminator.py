@@ -74,3 +74,10 @@ class Discriminator(torch.nn.Module):
         x = x.view(-1, 256)
         x = self.dense(x)
         return x
+
+if __name__ == "__main__":
+    latent_vector = torch.randn((16, n_tracks, n_measures*measure_resolution, n_pitches))
+    print(latent_vector.shape)
+    discriminator = Discriminator()
+    x = discriminator(latent_vector)
+    print(x.shape)
