@@ -18,6 +18,11 @@ To get the dataset run `./scripts/create_dataset.sh`.
 
 To train the model run `python -m main`
 
+### Running the sample
+
+To run the sample run `python -m sample_generator.base_model_sample_generator`.
+The output will show the name of the file that the program generated.
+
 ## Helpful links
 
 - [MuseGAN](https://salu133445.github.io/musegan/pdf/musegan-ismir2017-lbd-paper.pdf)
