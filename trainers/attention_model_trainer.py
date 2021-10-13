@@ -177,12 +177,12 @@ class AttentionModelTrainer:
                 if self.step >= n_steps:
                     break
         save_models(self.generator, self.discriminator, self.step, "attention")
-        
+
         self.generator.eval()
         latent_sample = torch.randn(1, latent_dim)
         if torch.cuda.is_available():
             latent_sample = latent_sample.cuda()
-        multitrack = generate_multitrack(self.generator, torch.randn(1, latent_dim))
+        multitrack = generate_multitrack(self.generator, latent_sample)
         save_midi_sample(self.generator, "attention", self.step)
 
 if __name__ == "__main__":
