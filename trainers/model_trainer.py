@@ -9,27 +9,19 @@ from config import (
     n_steps,
     sample_interval
 )
-from models.base import (
-    discriminator,
-    generator
-)
+
 from utils.helpers import (
     generate_multitrack,
     save_models,
     save_midi_sample
 )
 
-# packages for main
-from models.attention.discriminator import Discriminator
-from models.attention.generator import Generator
-from utils.data_loader import CreateDataLoader
-
-class AttentionModelTrainer:
+class ModelTrainer:
     def __init__(
         self,
         data_loader: DataLoader,
-        discriminator: discriminator.Discriminator,
-        generator: generator.Generator
+        discriminator,
+        generator
     ):
         # Data loader
         self.data_loader = data_loader
@@ -185,6 +177,12 @@ class AttentionModelTrainer:
         multitrack = generate_multitrack(self.generator, latent_sample)
         save_midi_sample(self.generator, "attention", self.step)
 
+# packages for main
+from models.attention.discriminator import Discriminator
+from models.attention.generator import Generator
+from utils.data_loader import CreateDataLoader
+
+
 if __name__ == "__main__":
     # building the models
     generator = Generator()
@@ -194,7 +192,7 @@ if __name__ == "__main__":
     data_loader = CreateDataLoader().load_data_loader()
 
     #building the trainer
-    trainer = AttentionModelTrainer(data_loader, discriminator, generator)
+    trainer = ModelTrainer(data_loader, discriminator, generator)
 
     #training the model
     trainer.train()
