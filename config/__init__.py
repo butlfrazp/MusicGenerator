@@ -15,7 +15,7 @@ tempo = 100
 # Training
 batch_size = 16
 latent_dim = 128
-n_steps = 20000
+n_steps = 50000
 
 # Sampling
 sample_interval = 1000  # interval to run the sampler (in step)
