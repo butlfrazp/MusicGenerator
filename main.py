@@ -9,10 +9,13 @@ if __name__ == "__main__":
     discriminator = Discriminator()
 
     # getting the data loader
+    print("Loading data")
     data_loader = CreateDataLoader().load_data_loader()
 
     #building the trainer
+    print("Creating Trainer")
     trainer = BaseModelTrainer(data_loader, discriminator, generator)
 
     #training the model
+    print("Training model")
     trainer.train()
