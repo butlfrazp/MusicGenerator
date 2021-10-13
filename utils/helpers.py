@@ -97,14 +97,16 @@ def save_models(generator, discriminator, training_iter, model_type="base"):
     _save_model(discriminator, discriminator_filename)
 
 
-def save_midi_sample(multitrack, model_type="base") -> str:
+def save_midi_sample(multitrack, model_type="base", iteration=None) -> str:
     midi_type_path = os.path.join(midi_output_dir, model_type)
 
     if not os.path.exists(midi_type_path):
         os.mkdir(midi_type_path)
 
-    sample_id = uuid4()
-    sample_id = str(sample_id)[:8]
+    sample_id = iteration
+    if iteration is None:
+        sample_id = uuid4()
+        sample_id = str(sample_id)[:8]
 
     file_name = f"sample_{sample_id}.mid"
 

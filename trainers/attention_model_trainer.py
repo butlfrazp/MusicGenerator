@@ -14,7 +14,9 @@ from models.base import (
     generator
 )
 from utils.helpers import (
-    save_models
+    generate_multitrack,
+    save_models,
+    save_midi_sample
 )
 
 # packages for main
@@ -162,12 +164,18 @@ class AttentionModelTrainer:
                 
                 if self.step % sample_interval == 0:
                     save_models(self.generator, self.discriminator, self.step, "attention")
+
+                    multitrack = generate_multitrack(self.generator, torch.randn(1, latent_dim))
+                    save_midi_sample(multitrack, "attention", self.step)
                     
                 self.step += 1
                 progress_bar.update(1)
                 if self.step >= n_steps:
                     break
         save_models(self.generator, self.discriminator, self.step, "attention")
+
+        multitrack = generate_multitrack(self.generator, torch.randn(1, latent_dim))
+        save_midi_sample(self.generator, "attention", self.step)
 
 if __name__ == "__main__":
     # building the models
