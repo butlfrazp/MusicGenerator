@@ -1,29 +1,13 @@
-import numpy as np
-from pypianoroll import (
-    Multitrack,
-    StandardTrack,
-    Track
-)
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from config import (
     batch_size,
-    beat_resolution,
     latent_dim,
-    is_drums,
-    lowest_pitch,
-    measure_resolution,
-    n_measures,
-    n_pitches,
     n_samples,
     n_steps,
-    n_tracks,
-    programs,
-    sample_interval,
-    tempo_array,
-    track_names
+    sample_interval
 )
 from models.base import (
     discriminator,
