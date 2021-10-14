@@ -27,6 +27,14 @@ class Discriminator(torch.nn.Module):
     """
     def __init__(self):
         super().__init__()
+        input_layer = []
+        input_layer.append(torch.nn.Linear(13, n_measures*measure_resolution))
+        input_layer.append(torch.nn.ReLU())
+        input_layer.append(torch.nn.Linear(n_measures*measure_resolution, n_measures*measure_resolution*n_pitches))
+        input_layer.append(torch.nn.ReLU())
+        input_layer.append(torch.nn.Linear(n_measures*measure_resolution*n_pitches, n_measures*measure_resolution*n_pitches))
+        input_layer.append(torch.nn.ReLU())
+
         self.conv0 = torch.nn.ModuleList([
             DiscriminatorBlock(1, 16, (1, 1, 12), (1, 1, 12)) for _ in range(n_tracks)
         ])
@@ -45,8 +53,14 @@ class Discriminator(torch.nn.Module):
         self.attn3 = Self_Attn(128, 'relu')
         self.attn4 = Self_Attn(256, 'relu')
 
-    def forward(self, x):
-        x = x.view(-1, n_tracks, n_measures, measure_resolution, n_pitches)
+        self.input = torch.nn.Sequential(*input_layer)
+
+    def forward(self, x, input):
+        input_output = self.input(input)
+        input_output = torch.reshape(input_output, (-1, 1, n_measures*measure_resolution, n_pitches))
+        x = torch.cat((x, input_output), 1)
+
+        x = x.view(-1, n_tracks+1, n_measures, measure_resolution, n_pitches)
         x = [conv(x[:, [i]]) for i, conv in enumerate(self.conv0)]
         x = torch.cat([conv(x_) for x_, conv in zip(x, self.conv1)], 1)
         x = self.conv2(x)
@@ -63,8 +77,9 @@ class Discriminator(torch.nn.Module):
         return x
 
 if __name__ == "__main__":
+    input = torch.rand((16, 13))
     latent_vector = torch.randn((16, n_tracks, n_measures*measure_resolution, n_pitches))
     print(latent_vector.shape)
     discriminator = Discriminator()
-    x = discriminator(latent_vector)
+    x = discriminator(latent_vector, input)
     print(x.shape)

@@ -23,11 +23,60 @@ from config import (
 from models.base.generator import Generator
 from models.base.discriminator import Discriminator
 
+def create_conditon_map() -> dict:
+    class_map = {}
+
+    files_dir = './data/amg'
+    files = os.listdir(files_dir)
+
+    for file in files:
+        genre = file.split("_")[2]
+        genre = genre.split(".txt")[0]
+
+        file_path = os.path.join(files_dir, file)
+        with open(file_path, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                id = line.split("\n")[0]
+                class_map[id] = genre
+
+    return class_map
+
 
 def generate_multitrack(generator, sample_latent) -> Multitrack:
     # Get generated samples
     generator.eval()
     samples = generator(sample_latent).cpu().detach().numpy()
+
+    samples = samples.transpose(1, 0, 2, 3).reshape(n_tracks, -1, n_pitches)
+    tracks = []
+    for idx, (program, is_drum, track_name) in enumerate(
+        zip(programs, is_drums, track_names)
+    ):
+        pianoroll = np.pad(
+            samples[idx] > 0.5,
+            ((0, 0), (lowest_pitch, 128 - lowest_pitch - n_pitches))
+        )
+        tracks.append(
+            StandardTrack(
+                name=track_name,
+                program=program,
+                is_drum=is_drum,
+                pianoroll=pianoroll
+            )
+        )
+    m = Multitrack(
+        tracks=tracks,
+        tempo=tempo_array,
+        resolution=beat_resolution
+    )
+
+    return m
+
+def generate_multitrack_conditional(generator, sample_latent, sample_label) -> Multitrack:
+    # Get generated samples
+    generator.eval()
+    samples = generator(sample_latent, sample_label).cpu().detach().numpy()
 
     samples = samples.transpose(1, 0, 2, 3).reshape(n_tracks, -1, n_pitches)
     tracks = []
@@ -115,3 +164,10 @@ def save_midi_sample(multitrack, model_type="base", iteration=None) -> str:
     pypianoroll.write(out_file, multitrack=multitrack)
 
     return file_name
+
+if __name__ == "__main__":
+    class_map = create_conditon_map()
+
+    import json
+    with open("./data/class_map.json", "w") as f:
+        json.dump(class_map, f)

@@ -35,3 +35,5 @@ midi_output_dir = "./midi_output"
 
 # dataset output dir
 dataset_output_dir = "./data/dataset.pt"
+conditional_dataset_output_dir = "./data/conditional_dataset.pt"
+conditional_dataset_label_output_dir = "./data/conditional_label_dataset.pt"
