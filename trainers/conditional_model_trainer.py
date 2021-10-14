@@ -87,6 +87,7 @@ class ConditionalModelTrainer:
         # Transfer data to GPU
         if torch.cuda.is_available():
             real_samples = real_samples.cuda()
+            real_label = real_label.cuda()
             latent = latent.cuda()
         
         # === Train the discriminator ===
@@ -166,6 +167,7 @@ class ConditionalModelTrainer:
                     label[0][random_number] = 1.0
                     if torch.cuda.is_available():
                         latent_sample = latent_sample.cuda()
+                        label = label.cuda()
                     multitrack = generate_multitrack_conditional(self.generator, latent_sample, label)
                     save_midi_sample(multitrack, "sagan", self.step)
                     
@@ -177,9 +179,13 @@ class ConditionalModelTrainer:
 
         self.generator.eval()
         latent_sample = torch.randn(1, latent_dim)
+        random_number = random.randint(0, 12)
+        label = torch.zeros(1, 13)
+        label[0][random_number] = 1.0
         if torch.cuda.is_available():
             latent_sample = latent_sample.cuda()
-        multitrack = generate_multitrack(self.generator, latent_sample)
+            label = label.cuda()
+        multitrack = generate_multitrack_conditional(self.generator, latent_sample, label)
         save_midi_sample(self.generator, "attention", self.step)
 
 # packages for main
